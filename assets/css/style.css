@@ -1,0 +1,62 @@
+.app-header {
+    color: white;
+    font-size: 36px;
+    padding: 1.5rem;
+}
+
+.row {
+    background-color: lightgray; /* yellow; */
+    margin: auto auto;
+}
+
+.searchCard {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    background-color: lightgray; /* yellow; */
+}
+
+.city-name {
+    font-size: 30px;
+}
+
+.forecast-date {
+    font-size: 18px;
+}
+
+.forecast-row {
+    /* align-items: center; */
+    margin-right: 15px;
+}
+
+.search-box {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-bottom: 4%;
+}
+
+.forecast-hdr {
+    text-align: center;
+    /* background-color: blue; */
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+/* ------------------------------ */
+/* --- Need to be responsive: --- */
+/* ------------------------------ */
+
+@media screen and (max-width: 575px)
+{
+  .container {
+    min-width: 275px;
+    margin-left: 1%;
+    margin-right: 1%;
+    padding-left: 2%;
+    /* padding-right: 2%; */
+    padding: 1% 15px 1% 15px;
+}
+  /* .row {
+      padding: 1% 15px 1% 15px;
+  } */
+}
