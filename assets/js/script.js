@@ -25,7 +25,6 @@ function showPage()
     if ( bDebugging )
         console.log( "City search list: [" + searchHistory + "]" );
     
-    // My {API key}: b96684f6f3c9f86da122a132d7c59c84
     // api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
     // api.openweathermap.org/data/2.5/weather?q={city name},{state code}&appid={API key}
     // api.openweathermap.org/data/2.5/weather?q={city name},{state code},{country code}&appid={API key}
