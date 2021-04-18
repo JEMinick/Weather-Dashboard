@@ -518,8 +518,9 @@ function showPage()
             else
                 alert( "Problem encountered!  Unable to locate \"" + sCityName + "\"\n"
                         + "Error received: " + "[" + error + "]" );
+            var sCity2Pop = searchHistory.pop( sCityName );
             if ( bDebugging )
-                console.log( "Popping: ["+searchHistory.pop( sCityName ) + "]" );
+                console.log( "Popping: ["+sCity2Pop+"]" );
             localStorage.setItem( locStorageKey, JSON.stringify(searchHistory) );
             displaySearchHistory();
         } );
@@ -554,14 +555,15 @@ function showPage()
     
     elSelectedCity.addEventListener( "click", function()
     {
-        let elCity = document.getElementById( "cityName" );
+        let elCityInput = document.getElementById( "cityName" );
         let sCity2Query = "";
-        var sCityName = elCity.value;
+        var sCityName = elCityInput.value;
         sCity2Query = sCityName.trim();
-        elCity.value = "";
-        
-        // if ( sCity2Query && (sCity2Query.length > 0) )
-        // {
+        elCityInput.value = "";
+        elCityInput.focus();
+
+        if ( sCity2Query && (sCity2Query.length > 0) )
+        {
             if ( bDebugging )
                 console.log( "Obtaining weather for: " + sCity2Query );
             
@@ -583,7 +585,7 @@ function showPage()
                 localStorage.setItem( locStorageKey, JSON.stringify(searchHistory) );
             }
             
-        // }
+        }
         
         if ( bDebugging )
             console.log( "displaySearchHistory: elSelectedCity click()" );
