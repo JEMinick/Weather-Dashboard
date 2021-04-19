@@ -1,5 +1,5 @@
 
-let bDebugging = false;
+let bDebugging = true;
 
 const sAPIkey = "b96684f6f3c9f86da122a132d7c59c84";
 const locStorageKey = "CityWeather";
@@ -240,6 +240,87 @@ function showPage()
         }
     ];
     
+    function mapOWMicon2local( sOWMiconName )
+    {
+      var sIconSubstitute = "";
+
+      // Clear Sky:
+      if ( sOWMiconName === "01d" ) {
+        sIconSubstitute = "clear.png";
+      }
+      else if ( sOWMiconName === "01n" ) {
+        sIconSubstitute = "clearnight.png";
+      }
+
+      // Few Clouds:
+      else if ( sOWMiconName === "02d" ) {
+        sIconSubstitute = "partlycloudy.png";
+      }
+      else if ( sOWMiconName === "02n" ) {
+        sIconSubstitute = "partlycloudynight.png";
+      }
+
+      // Scattered Clouds:
+      else if ( sOWMiconName === "03d" ) {
+        sIconSubstitute = "scatteredclouds.png";
+      }
+      else if ( sOWMiconName === "03n" ) {
+        sIconSubstitute = "scatteredclouds.png";
+      }
+
+      // Broken Clouds:
+      else if ( sOWMiconName === "04d" ) {
+        sIconSubstitute = "cloudy.png";
+      }
+      else if ( sOWMiconName === "04n" ) {
+        sIconSubstitute = "cloudynight.png";
+      }
+
+      // Shower Rain
+      else if ( sOWMiconName === "09d" ) {
+        sIconSubstitute = "rain02.png";
+      }
+      else if ( sOWMiconName === "09n" ) {
+        sIconSubstitute = "rainnight.png";
+      }
+
+      // RAIN:
+      else if ( sOWMiconName === "10d" ) {
+        sIconSubstitute = "rain01.png";
+      }
+      else if ( sOWMiconName === "10n" ) {
+        sIconSubstitute = "rainnight.png";
+      }
+
+      // Thunderstorm
+      else if ( sOWMiconName === "11d" ) {
+        sIconSubstitute = "thunderstorms01.png";
+      }
+      else if ( sOWMiconName === "11n" ) {
+        sIconSubstitute = "thunderstorms02.png";
+      }
+
+      // Snow:
+      else if ( sOWMiconName === "13d" ) {
+        sIconSubstitute = "snow.png";
+      }
+      else if ( sOWMiconName === "13n" ) {
+        sIconSubstitute = "snownight.png";
+      }
+
+      // Mist:
+      // else if ( sOWMiconName === "50d" ) {
+      //   sIconSubstitute = "hazy.png";
+      // }
+      // else if ( sOWMiconName === "50n" ) {
+      //   sIconSubstitute = "hazy.png";
+      // }
+      
+      // sIconSubstitute = "";
+      
+      return( sIconSubstitute );
+    }
+
     // When the search button is clicked, 
     // locate the weather associated to the city name typed by the user
     function getWeather( sCityName )
@@ -268,8 +349,7 @@ function showPage()
                     break;
             }
         }
-        var iStateCode = "", iStateIdx = -1;
-        var sStateAbbr = "";
+        var iStateIdx = -1, iStateCode = "", sStateAbbr = "";
         if ( sState2Locate.length > 0 ) {
             var sState = sState2Locate.toUpperCase();
             for( var i=0; (iStateCode === "") && (i < aStateInfo.length); i++ )
@@ -295,19 +375,32 @@ function showPage()
         if ( sCity2Locate.length > 0 )
         {
             if ( (sState2Locate.length > 0) && (iStateIdx >= 0) ) {
-                sURL = "https://api.openweathermap.org/data/2.5/weather?"
+                // sURL = "https://api.openweathermap.org/data/2.5/weather?"
+                //         + "q=" + sCity2Locate 
+                //           + "," + iStateCode
+                //           + "," + "840" // Coutry Code for US
+                //         + "&appid=" + sAPIkey
+                //         + "&units=imperial";
+                sURL = "https://api.openweathermap.org/data/2.5/forecast?"
                         + "q=" + sCity2Locate 
-                          + "," + iStateCode
-                          + "," + "840" // Coutry Code for US
+                        + "," + iStateCode
+                        + "," + "840" // Coutry Code for US
+                        // + "&mode=html"
                         + "&appid=" + sAPIkey
                         + "&units=imperial";
-            } else {
-                sURL = "https://api.openweathermap.org/data/2.5/weather?"
+              } else {
+                // sURL = "https://api.openweathermap.org/data/2.5/weather?"
+                //         + "q=" + sCity2Locate 
+                //         + "&appid=" + sAPIkey
+                //         + "&units=imperial";
+                sURL = "https://api.openweathermap.org/data/2.5/forecast?"
                         + "q=" + sCity2Locate 
+                        // + "&mode=html"
                         + "&appid=" + sAPIkey
                         + "&units=imperial";
-            }
-        }
+              }
+
+         }
         
         if ( bDebugging )
             console.log( "Weather URL: " + sURL );
@@ -317,6 +410,7 @@ function showPage()
         {
             if ( bDebugging ) {
                 console.log( "======================================================================" );
+                console.log( " Referencing the forecast[0] element for current weather:" );
                 console.log( response );
             }
             
@@ -324,54 +418,75 @@ function showPage()
             // so we can construct a standard Date() object:
             
             // response.data.dt : Time of data forecasted (GMT)
-            let currentDate = new Date( response.data.dt*1000 );
+            // This value DOES NOT include the milliseconds,
+            // therefore adjust the value:
+            let weatherDate = new Date( response.data.list[0].dt*1000 );
             
             if ( bDebugging )
-                console.log( "Weather Date obtained: " + currentDate );
+                console.log( "Weather Date obtained: " + weatherDate );
             
-            var iMonth = currentDate.getMonth()+1;
-            var iDay = currentDate.getDate();
-            var iYear = currentDate.getFullYear();
+            var iMonth = weatherDate.getMonth()+1;
+            var iDay = weatherDate.getDate();
+            var iYear = weatherDate.getFullYear();
             
-            // var iHour = currentDate.getHours();
-            // var iMin = currentDate.getMinutes();
-            // var iSec = currentDate.getSeconds();
-            // var iMSec = currentDate.getMilliseconds();
-            // var sAMorPM = ( iHour < 12 ? "am" : "pm" );
-            // var sHour = ( (iHour < 12 ) ? (iHour === 0 ? "12" : iHour) : (iHour-12) );
-            // var sMin = ( iMin < 10 ? "0"+iMin : iMin );
-            // var sSec = ( iSec < 10 ? "0"+iSec : iSec );
+            var iHour = weatherDate.getHours();
+            var iMin = weatherDate.getMinutes();
+            var iSec = weatherDate.getSeconds();
+            var iMSec = weatherDate.getMilliseconds();
+            var sAMorPM = ( iHour < 12 ? "am" : "pm" );
+            var sHour = ( (iHour < 12 ) ? (iHour === 0 ? "12" : iHour) : (iHour-12) );
+            var sMin = ( iMin < 10 ? "0"+iMin : iMin );
+            var sSec = ( iSec < 10 ? "0"+iSec : iSec );
             
             var elCityHdrEl = document.getElementById( "cityInfoHdr" );
-            elCityHdrEl.innerHTML = response.data.name + " (" + iMonth + "/" + iDay + "/" + iYear + ") ";
+            // elCityHdrEl.innerHTML = response.data.name + " (" + iMonth + "/" + iDay + "/" + iYear + ") ";
+            elCityHdrEl.innerHTML = response.data.city.name 
+                                    + " (" + iMonth + "/" + iDay + "/" + iYear
+                                    + " @ " + sHour + ":" + sMin + ":" + sSec + sAMorPM + ")"
+                                    ;
             
-            var weatherPic = response.data.weather[0].icon;
+            // var weatherPic = response.data.weather[0].icon;
+            var sIconURL = "";
+            var weatherPic = response.data.list[0].weather[0].icon;
+            var sNewIcon = mapOWMicon2local( weatherPic );
+            console.log( "Mapped: " + weatherPic + " to " + sNewIcon ) ;
+            if ( sNewIcon !== "" )
+            {
+              sIconURL = "./assets/images/weather/"+sNewIcon;
+            } else {
+              sIconURL = "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png";
+            }
+            
+            if ( bDebugging )
+                console.log( "weatherPic: [" + weatherPic + "]" );
             
             var elCurrentPicEl = document.getElementById( "cityWeatherPic" );
-            elCurrentPicEl.setAttribute( "src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png" );
-            elCurrentPicEl.setAttribute ("alt", response.data.weather[0].description );
+            elCurrentPicEl.setAttribute( "src", sIconURL ); // "https://openweathermap.org/img/wn/" + weatherPic );
+            elCurrentPicEl.setAttribute ("alt", response.data.list[0].weather[0].description );
             
             var elCurrentTempEl = document.getElementById( "cityTemperature" );
             // elCurrentTempEl.innerHTML = "Temperature: " + Convert2Fahrenheit(response.data.main.temp) + " &#176F";
-            elCurrentTempEl.innerHTML = "Temperature: " + Math.floor(response.data.main.temp) + " &degF"; // " &#176F";
+            elCurrentTempEl.innerHTML = "Temperature: " + Math.floor(response.data.list[0].main.temp) + " &degF"; // " &#176F";
             
             var elCityHumidityEl = document.getElementById("cityHumidity");4
-            elCityHumidityEl.innerHTML = "Humidity: " + response.data.main.humidity + "%";
+            elCityHumidityEl.innerHTML = "Humidity: " + response.data.list[0].main.humidity + "%";
             
             var elCityWindEl = document.getElementById( "cityWindSpeed" );
-            elCityWindEl.innerHTML = "Wind Speed: " + response.data.wind.speed + " MPH";
+            elCityWindEl.innerHTML = "Wind Speed: " + response.data.list[0].wind.speed + " MPH";
             
             var sUVQueryURL = "https://api.openweathermap.org/data/2.5/uvi/forecast?"
-                              + "lat=" + response.data.coord.lat 
-                              + "&lon=" + response.data.coord.lon 
+                              // + "lat=" + response.data.coord.lat 
+                              // + "&lon=" + response.data.coord.lon 
+                              + "lat=" + response.data.city.coord.lat 
+                              + "&lon=" + response.data.city.coord.lon 
                               + "&appid=" + sAPIkey 
                               + "&cnt=1";
             
-            //------------------------------
+            //------------------------------------------------------
             // UV-Index:
-            //    0..2: Low
-            //    3..7: Moderate to High
-            //    8..11: Very High to Extreme
+            //    0..2: Low (green)
+            //    3..7: Moderate to High (yellow)
+            //    8..11: Very High to Extreme (red)
             //------------------------------------------------------
             // Bootstrap Badges available:
             // <span class="badge badge-primary">Primary</span>
@@ -429,7 +544,7 @@ function showPage()
             
             // By using [.id], we can avoid any ambiguous name issues 
             // relating to our forecast information:
-            let cityID = response.data.id;
+            let cityID = response.data.city.id;
             //                          api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}
             let sForecastURL = "https://api.openweathermap.org/data/2.5/forecast?"
                                 + "id=" + cityID 
@@ -489,11 +604,21 @@ function showPage()
                     elForecastEls[i].append( elForecastTimeEl );
                   // }
                   
+                  var sForecastIconURL = "";
+                  var sForecastPic = response.data.list[iIndex].weather[0].icon;
+                  var sNewForecastIcon = mapOWMicon2local( sForecastPic );
+                  console.log( "Mapped: " + sForecastPic + " to " + sNewForecastIcon ) ;
+                  if ( sNewForecastIcon !== "" )
+                  {
+                    sForecastIconURL = "./assets/images/weather/"+sNewForecastIcon;
+                  } else {
+                    sForecastIconURL = "https://openweathermap.org/img/wn/" + sForecastPic + "@2x.png";
+                  }
+                  
                   let forecastWeatherEl = document.createElement( "img" );
-                  forecastWeatherEl.setAttribute( "src", "https://openweathermap.org/img/wn/" 
-                                                        + response.data.list[iIndex].weather[0].icon 
-                                                        + "@2x.png" );
-                  forecastWeatherEl.setAttribute("alt",response.data.list[iIndex].weather[0].description);
+
+                  forecastWeatherEl.setAttribute( "src", sForecastIconURL ); 
+                  forecastWeatherEl.setAttribute("alt", response.data.list[iIndex].weather[0].description );
                   elForecastEls[i].append( forecastWeatherEl );
                   
                   let elForecastTempEl = document.createElement("p");
