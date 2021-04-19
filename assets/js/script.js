@@ -1,5 +1,5 @@
 
-let bDebugging = true;
+let bDebugging = false;
 
 const sAPIkey = "b96684f6f3c9f86da122a132d7c59c84";
 const locStorageKey = "CityWeather";
@@ -449,7 +449,10 @@ function showPage()
             var sIconURL = "";
             var weatherPic = response.data.list[0].weather[0].icon;
             var sNewIcon = mapOWMicon2local( weatherPic );
-            console.log( "Mapped: " + weatherPic + " to " + sNewIcon ) ;
+
+            if ( bDebugging )
+              console.log( "Mapped: " + weatherPic + " to " + sNewIcon ) ;
+
             if ( sNewIcon !== "" )
             {
               sIconURL = "./assets/images/weather/"+sNewIcon;
@@ -607,7 +610,10 @@ function showPage()
                   var sForecastIconURL = "";
                   var sForecastPic = response.data.list[iIndex].weather[0].icon;
                   var sNewForecastIcon = mapOWMicon2local( sForecastPic );
-                  console.log( "Mapped: " + sForecastPic + " to " + sNewForecastIcon ) ;
+                  
+                  if ( bDebugging )
+                    console.log( "Mapped: " + sForecastPic + " to " + sNewForecastIcon ) ;
+                  
                   if ( sNewForecastIcon !== "" )
                   {
                     sForecastIconURL = "./assets/images/weather/"+sNewForecastIcon;
