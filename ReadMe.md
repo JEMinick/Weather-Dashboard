@@ -29,5 +29,5 @@ A "Clear History" button is also provided allowing the user to re-start city wea
    [OpenWeather API](https://openweathermap.org/api)
 
 # License:
-   [License Info](.\LICENSE)
+   [License Info](./LICENSE)
    
